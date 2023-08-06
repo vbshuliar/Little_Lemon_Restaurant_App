@@ -6,15 +6,20 @@ import {
   Text,
   Pressable,
   TextInput,
+  Alert,
 } from "react-native";
-
+import { ValidateEmail } from "../utils";
 const SubscribeScreen = () => {
   const [email, onChangeEmail] = React.useState("");
+  const [enableButton, setEnableButton] = React.useState(false);
   const handleSubscribe = () => {
     if (ValidateEmail(email)) {
-      navigation.navigate("Subscribe");
-    }s
+      setEnableButton(true);
+    } else {
+      setEnableButton(false);
+    }
   };
+
   return (
     <View style={styles.container}>
       <Image
@@ -27,13 +32,20 @@ const SubscribeScreen = () => {
       <TextInput
         style={styles.inputBox}
         value={email}
-        onChangeText={onChangeEmail}
+        onChangeText={(text) => {
+          onChangeEmail(text);
+          handleSubscribe();
+        }}
         placeholder="Type your email"
         keyboardType="email-address"
       />
       <Pressable
-        style={styles.button}
-        onPress={() => navigation.navigate("Subscribe")}
+        style={[styles.button, enableButton ? {} : styles.disabledButton]}
+        onPress={() => {
+          if (enableButton) {
+            Alert.alert("Thanks for subscribing, stay tuned!");
+          }
+        }}
       >
         <Text style={styles.buttonText}>Subscribe</Text>
       </Pressable>
@@ -74,6 +86,9 @@ const styles = StyleSheet.create({
     backgroundColor: "#364741",
     margin: 30,
     borderRadius: 10,
+  },
+  disabledButton: {
+    backgroundColor: "#888888",
   },
   buttonText: {
     color: "white",
